@@ -1,0 +1,61 @@
+h4 {
+    color: black;
+    margin-bottom: 2mm;
+}
+
+.keyword.interface,
+.keyword.klass
+{
+    color: #a15069
+}
+
+h3
+{
+    font-size: 2em;
+}
+
+
+.keyword.fun,
+.keyword.returns-arg-delim,
+.keyword.ctor,
+.keyword.dtor,
+.keyword.otor,
+.visibility
+{
+    color: #5c4386;
+    font-weight: normal;
+}
+
+.arg.name 
+{
+    color: #4a5d7e
+}
+.arg.name { margin-left:1mm; }
+.arg.direction { 
+    font-weight:normal; 
+    font-style:italic;
+}
+
+.decl.arg { margin-left:1mm; }
+
+h3 {
+    margin-bottom: 4mm;
+    margin-top: 10mm;
+}
+
+.visibility {
+    margin-right: 2mm;
+}
+
+.arg.type, 
+.returns.type,
+.interface.name,
+.klass.name
+{
+    color: #6e7665
+}
+
+.keyword.comment {
+    color:#ababab;
+    font-weight: bold;
+}

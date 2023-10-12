@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="unit.xsl"?>
+
+<unit name='Map'>
+  <uses>
+    <unit>SysUtils</unit>
+    <unit>Variants</unit>
+    <unit>Classes</unit>
+  </uses>
+  <types>
+    <interface name='Map.IStringMap'>
+      <function name='count' visibility='Public'>
+        <comments><comment>// Возвращает кол-во пар&#13;&#10;</comment>
+</comments>
+        <arguments />
+        <return>
+          <type name='Integer' />
+        </return>
+      </function>
+      <function name='get' visibility='Public'>
+        <comments><comment>// возвращает значение по указанному ключу&#13;&#10;</comment>
+</comments>
+        <arguments>
+          <argument name='name' direction='Input'>
+            <type name='String' />
+          </argument>
+        </arguments>
+        <return>
+          <type name='Variant' />
+        </return>
+      </function>
+      <function name='exists' visibility='Public'>
+        <comments><comment>// проверка наличия ключа&#13;&#10;</comment>
+</comments>
+        <arguments>
+          <argument name='name' direction='Input'>
+            <type name='String' />
+          </argument>
+        </arguments>
+        <return>
+          <type name='Boolean' />
+        </return>
+      </function>
+      <function name='key' visibility='Public'>
+        <comments><comment>// получение имени ключа по его индексу (0 - первый)&#13;&#10;</comment>
+</comments>
+        <arguments>
+          <argument name='index' direction='Input'>
+            <type name='Integer' />
+          </argument>
+        </arguments>
+        <return>
+          <type name='String' />
+        </return>
+      </function>
+      <function name='put' visibility='Public'>
+        <comments><comment>// добавление/замена занчения&#13;&#10;</comment>
+<comment>// аргумент&#13;&#10;</comment>
+<comment>//   name - ключ&#13;&#10;</comment>
+<comment>//   значение&#13;&#10;</comment>
+<comment>// возваращает&#13;&#10;</comment>
+<comment>//   предыдущее значение&#13;&#10;</comment>
+</comments>
+        <arguments>
+          <argument name='value' direction='Input'>
+            <type name='Variant' />
+          </argument>
+          <argument name='name' direction='Input'>
+            <type name='String' />
+          </argument>
+        </arguments>
+        <return>
+          <type name='Variant' />
+        </return>
+      </function>
+      <function name='delete' visibility='Public'>
+        <comments><comment>// удаление значения&#13;&#10;</comment>
+<comment>// аргумент&#13;&#10;</comment>
+<comment>//   name - ключ&#13;&#10;</comment>
+<comment>// возваращает&#13;&#10;</comment>
+<comment>//   предыдущее значение&#13;&#10;</comment>
+</comments>
+        <arguments>
+          <argument name='name' direction='Input'>
+            <type name='String' />
+          </argument>
+        </arguments>
+        <return>
+          <type name='Variant' />
+        </return>
+      </function>
+      <function name='toString' visibility='Public'>
+        <comments><comment>// Создает текстовое представление&#13;&#10;</comment>
+<comment>// { ключ=значение, ключ=значение, ... }&#13;&#10;</comment>
+</comments>
+        <arguments />
+        <return>
+          <type name='String' />
+        </return>
+      </function>
+    </interface>
+    <class name='Map.TStringMap'>
+      <constructor name='Create' visibility='Public'>
+        <arguments />
+      </constructor>
+      <constructor name='Copy' visibility='Public'>
+        <arguments>
+          <argument name='sample' direction='Input'>
+            <type name='Map.TStringMap' />
+          </argument>
+        </arguments>
+      </constructor>
+      <constructor name='Copyi' visibility='Public'>
+        <arguments>
+          <argument name='sample' direction='Input'>
+            <type-resolve unit='Map' name='IStringMap' />
+          </argument>
+        </arguments>
+      </constructor>
+      <destructor name='Destroy' visibility='Public'>
+        <arguments />
+      </destructor>
+      <function name='count' visibility='Public'>
+        <arguments />
+        <return>
+          <type name='Integer' />
+        </return>
+      </function>
+      <function name='get' visibility='Public'>
+        <arguments>
+          <argument name='name' direction='Input'>
+            <type name='String' />
+          </argument>
+        </arguments>
+        <return>
+          <type name='Variant' />
+        </return>
+      </function>
+      <function name='exists' visibility='Public'>
+        <arguments>
+          <argument name='name' direction='Input'>
+            <type name='String' />
+          </argument>
+        </arguments>
+        <return>
+          <type name='Boolean' />
+        </return>
+      </function>
+      <function name='key' visibility='Public'>
+        <arguments>
+          <argument name='index' direction='Input'>
+            <type name='Integer' />
+          </argument>
+        </arguments>
+        <return>
+          <type name='String' />
+        </return>
+      </function>
+      <function name='put' visibility='Public'>
+        <arguments>
+          <argument name='value' direction='Input'>
+            <type name='Variant' />
+          </argument>
+          <argument name='name' direction='Input'>
+            <type name='String' />
+          </argument>
+        </arguments>
+        <return>
+          <type name='Variant' />
+        </return>
+      </function>
+      <function name='delete' visibility='Public'>
+        <arguments>
+          <argument name='name' direction='Input'>
+            <type name='String' />
+          </argument>
+        </arguments>
+        <return>
+          <type name='Variant' />
+        </return>
+      </function>
+      <function name='toString' visibility='Public'>
+        <arguments />
+        <return>
+          <type name='String' />
+        </return>
+      </function>
+    </class>
+    <interface name='Map.IStringPair'>
+      <function name='getName' visibility='Public'>
+        <arguments />
+        <return>
+          <type name='String' />
+        </return>
+      </function>
+      <function name='getValue' visibility='Public'>
+        <arguments />
+        <return>
+          <type name='Variant' />
+        </return>
+      </function>
+      <procedure name='setValue' visibility='Public'>
+        <arguments>
+          <argument name='value' direction='Input'>
+            <type name='Variant' />
+          </argument>
+        </arguments>
+      </procedure>
+    </interface>
+    <class name='Map.TStringPair'>
+      <constructor name='Create' visibility='Public'>
+        <arguments>
+          <argument name='value' direction='Input'>
+            <type name='Variant' />
+          </argument>
+          <argument name='name' direction='Input'>
+            <type name='String' />
+          </argument>
+        </arguments>
+      </constructor>
+      <destructor name='Destroy' visibility='Public'>
+        <arguments />
+      </destructor>
+      <function name='getName' visibility='Public'>
+        <arguments />
+        <return>
+          <type name='String' />
+        </return>
+      </function>
+      <function name='getValue' visibility='Public'>
+        <arguments />
+        <return>
+          <type name='Variant' />
+        </return>
+      </function>
+      <procedure name='setValue' visibility='Public'>
+        <arguments>
+          <argument name='value' direction='Input'>
+            <type name='Variant' />
+          </argument>
+        </arguments>
+      </procedure>
+    </class>
+  </types>
+</unit>
