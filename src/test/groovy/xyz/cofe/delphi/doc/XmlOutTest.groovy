@@ -2,7 +2,7 @@ package xyz.cofe.delphi.doc
 
 import org.junit.jupiter.api.Test
 import xyz.cofe.delphi.ast.PascalFileAst
-import xyz.cofe.delphi.tsys.PascalUnit
+import xyz.cofe.delphi.tsys.tm.PascalUnit
 import xyz.cofe.delphi.tsys.TypeScope
 
 import java.nio.file.Path

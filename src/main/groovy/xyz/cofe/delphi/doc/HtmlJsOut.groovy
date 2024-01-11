@@ -2,7 +2,8 @@ package xyz.cofe.delphi.doc
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
-import xyz.cofe.delphi.tsys.PascalUnit
+import xyz.cofe.delphi.tsys.TypeScope
+import xyz.cofe.delphi.tsys.tm.PascalUnit
 
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
@@ -19,12 +20,6 @@ class HtmlJsOut {
         directory
     }
 
-    private def filesOf(PascalUnit unit){
-        if( unit==null ) throw new IllegalArgumentException("unit==null")
-        [ html: directory.resolve("unit/${unit.name}.html")
-        , jsData: directory.resolve("unit/${unit.name}.js")
-        ]
-    }
 
     private @Lazy ObjectMapper om = {
         var om = new ObjectMapper();
@@ -34,6 +29,19 @@ class HtmlJsOut {
         om
     }()
 
+    void write(TypeScope typeScope){
+        if( typeScope==null ) throw new IllegalArgumentException("typeScope==null")
+        if( !Files.exists(directory) )Files.createDirectories(directory)
+    }
+
+    private def filesOf(PascalUnit unit){
+        if( unit==null ) throw new IllegalArgumentException("unit==null")
+        [ html: directory.resolve("unit/${unit.name}.html")
+        , jsData: directory.resolve("unit/${unit.name}.js")
+        ]
+    }
+
+    //region write unit
     void write(PascalUnit unit){
         var files = filesOf(unit)
         var jsFile = files.jsData
@@ -47,4 +55,5 @@ class HtmlJsOut {
         json = "unitData = "+json
         Files.writeString(jsFile, json, StandardCharsets.UTF_8)
     }
+    //endregion
 }

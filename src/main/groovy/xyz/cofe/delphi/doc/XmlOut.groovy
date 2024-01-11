@@ -6,6 +6,18 @@ import xyz.cofe.coll.im.ImList
 import xyz.cofe.delphi.ast.Comment
 import xyz.cofe.delphi.ast.TypeIdentAst
 import xyz.cofe.delphi.tsys.*
+import xyz.cofe.delphi.tsys.tm.Argument
+import xyz.cofe.delphi.tsys.tm.ClassType
+import xyz.cofe.delphi.tsys.tm.Constructor
+import xyz.cofe.delphi.tsys.tm.Destructor
+import xyz.cofe.delphi.tsys.tm.Function
+import xyz.cofe.delphi.tsys.tm.InterfaceType
+import xyz.cofe.delphi.tsys.tm.NamedType
+import xyz.cofe.delphi.tsys.tm.Operator
+import xyz.cofe.delphi.tsys.tm.PascalUnit
+import xyz.cofe.delphi.tsys.tm.Procedure
+import xyz.cofe.delphi.tsys.tm.Type
+import xyz.cofe.delphi.tsys.tm.TypeName
 
 import java.nio.file.Files
 import java.nio.file.Path
@@ -40,20 +52,20 @@ class XmlOut {
             MarkupBuilder out = new MarkupBuilder(outWriter)
             out.unit(name:unit.name.toString()){
                 out.uses() {
-                    unit.uses.forEach { tn -> out."unit"( tn.toString() ) }
+                    unit.uses.each { tn -> out."unit"( tn.toString() ) }
                 }
 
                 out.types() {
-                    unit.types.forEach { t -> write(out,t) }
+                    unit.types.each { t -> write(out,t) }
                 }
             }
         }
     }
 
-    static void writeComments(MarkupBuilder out, ImList<Comment,?> comments){
+    static void writeComments(MarkupBuilder out, ImList<Comment> comments){
         if( comments.size()>0 ) {
             out.comments() {
-                comments.forEach { cmt ->
+                comments.each { cmt ->
                     out.getMkp().yieldUnescaped("<comment>")
                     out.getMkp().yieldUnescaped(
                         cmt.text()
@@ -86,12 +98,12 @@ class XmlOut {
 
     static void writeItf(MarkupBuilder out,InterfaceType itf){
         writeComments(out, itf.comments)
-        itf.body.forEach {writeObjItem(out,it) }
+        itf.body.each {writeObjItem(out,it) }
     }
 
     static void writeClass(MarkupBuilder out,ClassType cls){
         writeComments(out, cls.comments)
-        cls.body.forEach {writeObjItem(out,it) }
+        cls.body.each {writeObjItem(out,it) }
     }
 
     static void writeObjItem(MarkupBuilder out,Object item){
@@ -150,9 +162,9 @@ class XmlOut {
             }
         }
     }
-    static void writeArgs(MarkupBuilder out,ImList<Argument,?> arguments){
+    static void writeArgs(MarkupBuilder out,ImList<Argument> arguments){
         out.arguments() {
-            arguments.forEach { arg ->
+            arguments.each { arg ->
                 if( arg.expression.isPresent() ) {
                     out.argument(name: arg.name, direction: arg.direction, expression:arg.expression.get()) {
                         writeTypeId(out, arg.type)
@@ -173,7 +185,7 @@ class XmlOut {
                 TypeIdentAst tIdent = tref.type()
                 TypeName refName = TypeName.of(tIdent.name())
                 out."type-resolve"(unit: unitName, name: refName){
-                    tIdent.params().forEach { genParam ->
+                    tIdent.params().each { genParam ->
                         out."gen-param"( genParam )
                     }
                 }
