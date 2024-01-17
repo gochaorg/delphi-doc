@@ -11,7 +11,7 @@ import java.util.regex.Pattern
 
 class Main {
     Charset charset = Charset.defaultCharset()
-    Pattern sourcePattern = Pattern.compile('(?is)^.+\\.pas$')
+    Pattern sourcePathPattern = Pattern.compile('(?is)^.+\\.pas$')
     List<SourceRoot> sources = []
     Path outputDir = Path.of('.')
 
@@ -50,7 +50,7 @@ class Main {
                     break
                 case '-s':
                     state = ''
-                    sources.add(new SourceRoot(path: Path.of(arg), charset: charset, pathPattern: sourcePattern))
+                    sources.add(new SourceRoot(path: Path.of(arg), charset: charset, pathPattern: sourcePathPattern))
                     break
                 case '-e':
                     state = ''
@@ -58,7 +58,7 @@ class Main {
                     break
                 case '-p':
                     state = ''
-                    sourcePattern = Pattern.compile(arg)
+                    sourcePathPattern = Pattern.compile(arg)
                     break
                 case '-d':
                     state = ''
