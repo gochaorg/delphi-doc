@@ -31,7 +31,7 @@ class Main {
                         case '-s':
                             state = '-s'
                             break
-                        case '-e':
+                        case '-e' | '-charset':
                             state = '-e'
                             break
                         case '-p':

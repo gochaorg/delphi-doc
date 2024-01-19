@@ -11,7 +11,7 @@ class HtmlJsOutTest {
     @Test
     void unitOut() {
         var pu  = PascalFileAst.parse(
-            Path.of("/home/user/code/delphi/delphi-parser/src/test/resources/samples/Map.pas").getText("windows-1251"),
+            Path.of("C:\\code\\git-from-virt\\ASPPA\\src\\Modules\\AccountCard\\Source\\AccCardFunc.pas").getText("windows-1251"),
             "Map.pas",true
         )
         var ts = new TypeScope()

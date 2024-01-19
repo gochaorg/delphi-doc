@@ -27,11 +27,17 @@
             <plugin>
                 <groupId>org.codehaus.gmavenplus</groupId>
                 <artifactId>gmavenplus-plugin</artifactId>
-                <version>1.13.1</version>
+                <version>3.0.2</version>
                 <executions>
                     <execution>
                         <goals>
-                            <goal>execute</goal>
+                            <goal>addSources</goal>
+                            <goal>addTestSources</goal>
+                            <goal>compile</goal>
+                            <goal>generateTestStubs</goal>
+                            <goal>compileTests</goal>
+                            <goal>removeStubs</goal>
+                            <goal>removeTestStubs</goal>
                         </goals>
                     </execution>
                 </executions>

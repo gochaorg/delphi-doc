@@ -20,7 +20,6 @@ class HtmlJsOut {
         directory
     }
 
-
     private @Lazy ObjectMapper om = {
         var om = new ObjectMapper();
         om.findAndRegisterModules();
