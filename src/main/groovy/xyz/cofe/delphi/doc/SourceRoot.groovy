@@ -16,6 +16,7 @@ class SourceRoot {
     Charset charset
     Path path
     Pattern pathPattern
+    List<Pattern> excludePatterns
 
     @CompileStatic
     Stream<SourceFile> stream(){
