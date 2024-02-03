@@ -1,279 +1,139 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <meta charset="utf-8">
-    <title>module Map</title>
-    <script src="unit/Map.js"></script>
-    <script src="3.2.36_dist_vue.global.js"></script>
-    <script src="unit.js" defer="true"></script>
-    <link rel="stylesheet" type="text/css" href="style.css">
+  <meta charset="utf-8">
+  <title>module Map</title>
+  <script src="unit/Map.js"></script>
+  <script src="3.2.36_dist_vue.global.js"></script>
+  <script src="unit.js" defer="true"></script>
+  <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 
+<!-- приложение -->
 <div id="app" class="decl unit">
-    <h1> 
-        <span class="keyword unit">unit </span> 
-        <span class="unit name">{{ unit.name.reduce( (acc,it) => acc+it, '' ) }}</span> 
-    </h1>
+  <h1>
+    <span class="keyword unit">unit </span>
+    <span class="unit name">{{ unit.name.reduce( (acc,it) => acc+it, '' ) }}</span>
+  </h1>
 
-    <div class="file">
-        <span class="keyword file">file </span> 
-        <span class="file name">{{unit.declaration.start.fileName}}</span>
+  <div class="file">
+    <span class="keyword file">file </span>
+    <span class="file name">{{unit.declaration.start.fileName}}</span>
+  </div>
+
+  <div class="uses">
+    <h2 class="keyword uses">Uses</h2>
+    <div class="use" v-for="mod in unit.uses">
+      {{ mod.reduce( (acc,it) => acc+( acc.length > 0 ? '.' : '' )+it, '' ) }}
+    </div>
+  </div>
+
+  <h2 class="keyword types">Types</h2>
+  <div class="decl type" v-for="ty in unit.types">
+    <div v-if="ty['@type'] == 'InterfaceType$Named'" class="decl interface">
+      <h3>
+        <span class="keyword interface">interface </span>
+        <span class="interface name">{{ty.name.reduce( (acc,it) => acc+( acc.length > 0 ? '.' : '' )+it, '' )}}</span>
+      </h3>
+      <div class="parents" v-if="ty.parents.length > 0">
+        <div class="keyword parents">parents:</div>
+        <div class="parent type" v-for="prnt in ty.parents">{{prnt}}</div>
+      </div>
+      <div class="body" v-for="mth in ty.body">
+        <doc-method :method="mth"></doc-method>
+      </div>
     </div>
 
-    <div class="uses">
-        <h2 class="keyword uses">Uses</h2>
-        <div class="use" v-for="mod in unit.uses">
-            {{ mod.reduce( (acc,it) => acc+( acc.length > 0 ? '.' : '' )+it, '' ) }}
+    <div v-if="ty['@type'] == 'ClassType.Named'" class="decl klass">
+      <h3>
+        <span class="keyword klass">class </span>
+        <span class="klass name">{{ty.name.reduce( (acc,it) => acc+( acc.length > 0 ? '.' : '' )+it, '' )}}</span>
+      </h3>
+      <div class="parents" v-if="ty.parents.length > 0">
+        <div class="keyword parents">parents:</div>
+        <div class="parent type" v-for="prnt in ty.parents">{{prnt}}</div>
+      </div>
+      <div class="body" v-for="mth in ty.body">
+        <div class="decl field" v-if="mth['@type'] == 'Field'">
+          <h4>
+            <span class="field visibility">{{mth.visibility}} </span>
+            <span class="keyword field">field </span>
+            <span class="field name">{{mth.name}} </span>
+            <span class="keyword field-type-delim"> : </span>
+            <span class="returns type">{{mth.fieldType}} </span>
+          </h4>
+          <div class="comments" v-if="mth.comments.length > 0">
+            <span class="keyword comment">comments:</span>
+            <div class="comment" v-for="cmt in mth.comments">
+              {{ cmt.text }}
+            </div>
+          </div>
         </div>
+
+        <doc-method :method="mth" v-if="['Function','Procedure','Constructor','Destructor','Operator'].indexOf(mth['@type']) >= 0"></doc-method>
+
+      </div>
+
     </div>
-
-    <h2 class="keyword types">Types</h2>
-    <div class="decl type" v-for="ty in unit.types">
-        <div v-if="ty['@type'] == 'InterfaceType$Named'" class="decl interface">
-            <h3>
-                <span class="keyword interface">interface </span> 
-                <span class="interface name">{{ty.name.reduce( (acc,it) => acc+( acc.length > 0 ? '.' : '' )+it, '' )}}</span>
-            </h3>
-            <div class="parents" v-if="ty.parents.length > 0">
-                <div class="keyword parents">parents:</div>
-                <div class="parent type" v-for="prnt in ty.parents">{{prnt}}</div>
-            </div>
-            <div class="body" v-for="mth in ty.body">
-                <div class="decl fun" v-if="mth['@type'] == 'Function'">
-                    <h4>
-                        <span class="keyword fun">function </span> 
-                        <span class="fun name">{{mth.name}} </span>
-                        <span class="decl args" v-if="mth.arguments.length > 0">
-                            <span class="keyword open parenthesis"> ( </span>
-                            <span class="decl arg" v-for="(arg,aarg,iarg) in mth.arguments">
-                                <span class="keyword comma" v-if="aarg > 0">, </span>
-                                <span class="arg direction">{{arg.direction}} </span>
-                                <span class="arg name">{{arg.name}} </span>
-                                <span class="keyword arg-type-delim"> : </span>
-                                <span class="arg type">{{arg.type}} </span>
-                                <span class="arg def-value" v-if="arg.expression != null"> 
-                                    <span class="keyword arg-exp-delim"> = </span>
-                                    <span class="arg expression">{{arg.expression}}</span>
-                                </span>                        
-                            </span>
-                            <span class="keyword close parenthesis"> ) </span>
-                        </span>
-                        <span class="keyword returns-arg-delim"> returns </span> 
-                        <span class="returns type">{{mth.returns}} </span>
-                    </h4>
-                    <div class="comments" v-if="mth.comments.length > 0">
-                        <span class="keyword comment">comments:</span>
-                        <div class="comment" v-for="cmt in mth.comments">
-                            {{ cmt.text }}
-                        </div>
-                    </div>
-                </div>
-
-                <div class="dec proc" v-if="mth['@type'] == 'Procedure'">
-                    <h4>
-                        <span class="keyword fun">procedure </span> 
-                        <span class="proc name">{{mth.name}} </span>
-                        <span class="decl args" v-if="mth.arguments.length > 0">
-                            <span class="keyword open parenthesis"> ( </span>
-                            <span class="decl arg" v-for="(arg,aarg,iarg) in mth.arguments">
-                                <span class="keyword comma" v-if="aarg > 0">, </span>
-                                <span class="arg direction">{{arg.direction}} </span>
-                                <span class="arg name">{{arg.name}} </span>
-                                <span class="keyword arg-type-delim"> : </span>
-                                <span class="arg type">{{arg.type}} </span>
-                                <span class="arg def-value" v-if="arg.expression != null"> 
-                                    <span class="keyword arg-exp-delim"> = </span>
-                                    <span class="arg expression">{{arg.expression}}</span>
-                                </span>                        
-                            </span>
-                            <span class="keyword close parenthesis"> ) </span>
-                        </span>
-                    </h4>
-                    <div class="comments" v-if="mth.comments.length > 0">
-                        <span class="keyword comment">comments:</span>
-                        <div class="comment" v-for="cmt in mth.comments">
-                            {{ cmt.text }}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div v-if="ty['@type'] == 'ClassType.Named'" class="decl klass">
-            <h3>
-                <span class="keyword klass">class </span> 
-                <span class="klass name">{{ty.name.reduce( (acc,it) => acc+( acc.length > 0 ? '.' : '' )+it, '' )}}</span>
-            </h3>
-            <div class="parents" v-if="ty.parents.length > 0">
-                <div class="keyword parents">parents:</div>
-                <div class="parent type" v-for="prnt in ty.parents">{{prnt}}</div>
-            </div>
-            <div class="body" v-for="mth in ty.body">
-                <div class="decl field" v-if="mth['@type'] == 'Field'">
-                    <h4>
-                        <span class="field visibility">{{mth.visibility}} </span>
-                        <span class="keyword field">field </span> 
-                        <span class="field name">{{mth.name}} </span>
-                        <span class="keyword field-type-delim"> : </span> 
-                        <span class="returns type">{{mth.fieldType}} </span>
-                    </h4>
-                    <div class="comments" v-if="mth.comments.length > 0">
-                        <span class="keyword comment">comments:</span>
-                        <div class="comment" v-for="cmt in mth.comments">
-                            {{ cmt.text }}
-                        </div>
-                    </div>
-                </div>
-
-                <div class="decl fun" v-if="mth['@type'] == 'Function'">
-                    <h4>
-                        <span class="fun visibility">{{mth.visibility}} </span>
-                        <span class="keyword fun">function </span> 
-                        <span class="fun name">{{mth.name}} </span>
-                        <span class="decl args" v-if="mth.arguments.length > 0">
-                            <span class="keyword open parenthesis"> ( </span>
-                            <span class="decl arg" v-for="(arg,aarg,iarg) in mth.arguments">
-                                <span class="keyword comma" v-if="aarg > 0">, </span>
-                                <span class="arg direction"> {{arg.direction}} </span>
-                                <span class="arg name"> {{arg.name}} </span>
-                                <span class="keyword arg-type-delim"> : </span>
-                                <span class="arg type">{{arg.type}} </span>
-                                <span class="arg def-value" v-if="arg.expression != null"> 
-                                    <span class="keyword arg-exp-delim"> = </span>
-                                    <span class="arg expression">{{arg.expression}}</span>
-                                </span>                        
-                            </span>
-                            <span class="keyword close parenthesis"> ) </span>
-                        </span>
-                        <span class="keyword returns-arg-delim"> returns </span> 
-                        <span class="returns type">{{mth.returns}} </span>
-                    </h4>
-                    <div class="comments" v-if="mth.comments.length > 0">
-                        <span class="keyword comment">comments:</span>
-                        <div class="comment" v-for="cmt in mth.comments">
-                            {{ cmt.text }}
-                        </div>
-                    </div>
-                </div>
-
-                <div class="dec proc" v-if="mth['@type'] == 'Procedure'">
-                    <h4>
-                        <span class="proc visibility">{{mth.visibility}} </span>
-                        <span class="keyword fun">procedure </span> 
-                        <span class="proc name">{{mth.name}} </span>
-                        <span class="decl args" v-if="mth.arguments.length > 0">
-                            <span class="keyword open parenthesis"> ( </span>
-                            <span class="decl arg" v-for="(arg,aarg,iarg) in mth.arguments">
-                                <span class="keyword comma" v-if="aarg > 0">, </span>
-                                <span class="arg direction">{{arg.direction}} </span>
-                                <span class="arg name">{{arg.name}} </span>
-                                <span class="keyword arg-type-delim"> : </span>
-                                <span class="arg type">{{arg.type}} </span>
-                                <span class="arg def-value" v-if="arg.expression != null"> 
-                                    <span class="keyword arg-exp-delim"> = </span>
-                                    <span class="arg expression">{{arg.expression}}</span>
-                                </span>                        
-                            </span>
-                            <span class="keyword close parenthesis"> ) </span>
-                        </span>
-                    </h4>
-                    <div class="comments" v-if="mth.comments.length > 0">
-                        <span class="keyword comment">comments:</span>
-                        <div class="comment" v-for="cmt in mth.comments">
-                            {{ cmt.text }}
-                        </div>
-                    </div>
-                </div>
-
-                <div class="dec ctor" v-if="mth['@type'] == 'Constructor'">
-                    <h4>
-                        <span class="ctor visibility">{{mth.visibility}} </span>
-                        <span class="keyword ctor">constructor </span> 
-                        <span class="ctor name">{{mth.name}} </span>
-                        <span class="decl args" v-if="mth.arguments.length > 0">
-                            <span class="keyword open parenthesis"> ( </span>
-                            <span class="decl arg" v-for="(arg,aarg,iarg) in mth.arguments">
-                                <span class="keyword comma" v-if="aarg > 0">, </span>
-                                <span class="arg direction">{{arg.direction}} </span>
-                                <span class="arg name">{{arg.name}} </span>
-                                <span class="keyword arg-type-delim"> : </span>
-                                <span class="arg type">{{arg.type}} </span>
-                                <span class="arg def-value" v-if="arg.expression != null"> 
-                                    <span class="keyword arg-exp-delim"> = </span>
-                                    <span class="arg expression">{{arg.expression}}</span>
-                                </span>                        
-                            </span>
-                            <span class="keyword close parenthesis"> ) </span>
-                        </span>
-                    </h4>
-                    <div class="comments" v-if="mth.comments.length > 0">
-                        <span class="keyword comment">comments:</span>
-                        <div class="comment" v-for="cmt in mth.comments">
-                            {{ cmt.text }}
-                        </div>
-                    </div>
-                </div>
-
-                <div class="dec dtor" v-if="mth['@type'] == 'Destructor'">
-                    <h4>
-                        <span class="dtor visibility">{{mth.visibility}} </span>
-                        <span class="keyword dtor">destructor </span> 
-                        <span class="dtor name">{{mth.name}} </span>
-                        <span class="decl args" v-if="mth.arguments.length > 0">
-                            <span class="keyword open parenthesis"> ( </span>
-                            <span class="decl arg" v-for="(arg,aarg,iarg) in mth.arguments">
-                                <span class="keyword comma" v-if="aarg > 0">, </span>
-                                <span class="arg direction">{{arg.direction}} </span>
-                                <span class="arg name">{{arg.name}} </span>
-                                <span class="keyword arg-type-delim"> : </span>
-                                <span class="arg type">{{arg.type}} </span>
-                                <span class="arg def-value" v-if="arg.expression != null"> 
-                                    <span class="keyword arg-exp-delim"> = </span>
-                                    <span class="arg expression">{{arg.expression}}</span>
-                                </span>                        
-                            </span>
-                            <span class="keyword close parenthesis"> ) </span>
-                        </span>
-                    </h4>
-                    <div class="comments" v-if="mth.comments.length > 0">
-                        <span class="keyword comment">comments:</span>
-                        <div class="comment" v-for="cmt in mth.comments">
-                            {{ cmt.text }}
-                        </div>
-                    </div>
-                </div>
-
-                <div class="dec otor" v-if="mth['@type'] == 'Operator'">
-                    <h4>
-                        <span class="otor visibility">{{mth.visibility}} </span>
-                        <span class="keyword otor">operator </span> 
-                        <span class="otor name">{{mth.name}} </span>
-                        <span class="decl args" v-if="mth.arguments.length > 0">
-                            <span class="keyword open parenthesis"> ( </span>
-                            <span class="decl arg" v-for="(arg,aarg,iarg) in mth.arguments">
-                                <span class="keyword comma" v-if="aarg > 0">, </span>
-                                <span class="arg direction">{{arg.direction}} </span>
-                                <span class="arg name">{{arg.name}} </span>
-                                <span class="keyword arg-type-delim"> : </span>
-                                <span class="arg type">{{arg.type}} </span>
-                                <span class="arg def-value" v-if="arg.expression != null"> 
-                                    <span class="keyword arg-exp-delim"> = </span>
-                                    <span class="arg expression">{{arg.expression}}</span>
-                                </span>                        
-                            </span>
-                            <span class="keyword close parenthesis"> ) </span>
-                        </span>
-                    </h4>
-                    <div class="comments" v-if="mth.comments.length > 0">
-                        <span class="keyword comment">comments:</span>
-                        <div class="comment" v-for="cmt in mth.comments">
-                            {{ cmt.text }}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+  </div>
 </div>
+
+<!-- Компоненты -->
+<script type="text/x-template" id="doc-comments">
+  <div class="comments" v-if="comments.length >0">
+    <span class="keyword comment">comments:</span>
+    <div class="comment" v-for="cmt in comments">
+      {{ cmt.text }}
+    </div>
+  </div>
+</script>
+
+<script type="text/x-template" id="doc-fun-returns">
+  <span class="keyword returns-arg-delim"> : </span>
+  <span class="returns type">{{returns}} </span>
+</script>
+
+<script type="text/x-template" id="doc-arg">
+  <span class="keyword comma" v-if="index > 0">, </span>
+  <span class="arg direction">{{arg.direction}} </span>
+  <span class="arg name">{{arg.name}} </span>
+  <span class="keyword arg-type-delim"> : </span>
+  <span class="arg type">{{arg.type}} </span>
+  <span class="arg def-value" v-if="arg.expression != null">
+    <span class="keyword arg-exp-delim"> = </span>
+    <span class="arg expression">{{arg.expression}}</span>
+  </span>
+</script>
+
+<script type="text/x-template" id="doc-args">
+  <span class="decl args" v-if="arguments.length > 0">
+    <span class="keyword open parenthesis"> ( </span>
+    <span class="decl arg" v-for="(arg,aarg,iarg) in arguments">
+      <doc-arg :index="aarg" :arg="arg" />
+    </span>
+    <span class="keyword close parenthesis"> ) </span>
+  </span>
+</script>
+
+<script type="text/x-template" id="doc-method">
+  <div :class="['decl', cssClass]">
+    <h4>
+      <span :class="['keyword', cssClass]">
+        <span :class="[cssClass,'visibility']" v-if="method.visibility">{{method.visibility}}</span>
+        <span v-if="method['@type'] == 'Function'">function</span> 
+        <span v-if="method['@type'] == 'Procedure'">procedure</span>
+        <span v-if="method['@type'] == 'Constructor'">constructor</span>
+        <span v-if="method['@type'] == 'Destructor'">destructor</span>
+        <span v-if="method['@type'] == 'Operator'">operator</span>
+        <span>&nbsp;</span>
+      </span>
+      <span :class="[cssClass, 'name']" v-if="method.name">{{method.name}} </span>
+      <doc-args :arguments="method.arguments" v-if="method.arguments"></doc-args>
+      <doc-fun-returns :returns="method.returns" v-if="method['@type'] == 'Function'"></doc-fun-returns>            
+    </h4>
+    <doc-comments :comments="method.comments" v-if="method.comments"></doc-comments>
+  </div>
+</script>
 
 </html>
